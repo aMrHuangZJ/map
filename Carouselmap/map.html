@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>vue轮播图</title>
+		<style>
+			.slide-content{
+				height: 400px;
+				width: 650px;
+				margin: 10px auto;
+				position: relative;
+			}
+			img{
+				height: 400px;
+				width: 650px;
+			}
+			.up-page, .next-page{
+				height: 40px;
+				width: 60px;
+				background-color: #999;
+				opacity:0.5;
+				text-align: center;
+				line-height: 40px;
+				color: black;
+				font-weight: bold;
+			}
+			.up-page{
+				position: absolute;
+				top: 50%;
+				left: 0;
+				transform: translate(0,-50%);
+			}
+			.next-page{
+				position: absolute;
+				top: 50%;
+				right: 0;
+				transform: translate(0,-50%);
+			}
+			.slide-index{
+				position: absolute;
+				bottom: 1%;
+				left: 50%;
+				transform: translate(-50%,0);
+			}
+			.slide-index li{
+				float: left;
+				margin-right: 20px;
+				
+			}
+			.active{
+				color: green;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<div id="app">
+			<div class="slide-content">
+				<div class="slide-view">
+					<!-- 轮播图图片 -->
+					<div>
+						<img v-for="(item, index) in imageList" 
+							:src="item" :key="index"
+							v-show="current == index"
+							@mouseenter="stopTiming" @mouseleave="timing">
+					</div>
+					<!-- 控制上/下一张图 -->
+					<span class="up-page" 
+							@click="changePhoto('up')"
+							@mouseenter="stopTiming" @mouseleave="timing">上一张</span>
+					<span class="next-page"
+							@click="changePhoto('up')"
+							@mouseenter="stopTiming" @mouseleave="timing">下一张</span>
+					<!-- 轮播图下方小圆点 -->
+					<ul class="slide-index">					
+							<li v-for="(a, b) in imageList" :key="b" :class="current == b ? 'active' : ''"></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	
+	<script src="./vue.js"></script>
+	<script>
+		const app = new Vue({
+			el: "#app",
+			data: {
+				imageList: [
+					"./img/1.png",
+					"./img/2.png",
+					"./img/3.png",
+					"./img/4.png",
+					"./img/5.png",
+				],
+				current: 0,
+				timecontrol: null
+			},
+			mounted(){
+				// 组件进入生命周期mounted后调用计时器启动
+				this.timing()
+			},
+			methods:{
+				// 计时器
+				timing(){
+					this.timecontrol = setInterval(()=>{
+						this.current++;
+						if(this.current == this.imageList.length){
+							this.current =0
+						}
+						
+					},1000)
+				},
+				// 鼠标进入轮播图就暂停计时器
+				stopTiming(){
+					clearInterval(this.timecontrol)
+				},
+				// 点击上/下一张图
+				changePhoto(str){
+					if(str === 'up'){
+						if(this.current == 0){
+							this.current = this.imageList.length;
+						}
+						this.current--;
+					}else{
+						this.current++;
+						if(this.current == 0){
+							this.current = this.imageList.length;
+						}
+						
+					}
+				}
+			}
+		})
+	</script>
+	</body>
+</html>
